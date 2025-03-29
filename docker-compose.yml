@@ -1,47 +1,30 @@
 services:
-  # Aplicación Node.js
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: node_app
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=development
-      - MONGODB_URI=mongodb://admin:password@mongodb:27017/app_db?authSource=admin
-      - PORT=3000
-      - JWT_SECRET=your_jwt_secret_key
-    volumes:
-      - ./:/app
-      - /app/node_modules
-    depends_on:
-      - mongodb
-    networks:
-      - app-network
-
-  # Base de datos MongoDB
   mongodb:
     image: mongo:latest
     container_name: mongodb
-    restart: unless-stopped
-    ports:
-      - "27017:27017"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=password
-      - MONGO_INITDB_DATABASE=app_db
+    hostname: mongodb
     volumes:
-      - mongodb_data:/data/db
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - mongodb-data:/data/db/
+      - mongodb-log:/var/log/mongodb/
+    env_file:
+      - .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    ports:
+      - "28017:27017" 
     networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+      - mongodb_network
 
 volumes:
-  mongodb_data:
+  mongodb-data:
     driver: local
+    name: mongo-data
+  mongodb-log:
+    driver: local
+    name: mongo-log
+
+networks:
+  mongodb_network:
+    driver: bridge
+    name: mongo-network
