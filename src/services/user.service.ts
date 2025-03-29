@@ -1,6 +1,6 @@
 // src/services/user.service.ts
 import User from '../models/user.model';
-import { IUserDocument, IUserInput, IUserUpdate, IUserLoginResponse, UserRole } from '../interfaces/user.interface';
+import { IUserDocument, IUserInput, IUserUpdate, IUserLoginResponse } from '../interfaces/user.interface';
 import jwt from 'jsonwebtoken';
 import { AppError } from '../lib/appError';
 
@@ -21,6 +21,7 @@ export class UserService {
       const user = new User(userData);
       return await user.save();
     } catch (error) {
+        console.error('Error al crear el usuario:', error);
       // Rethrow para manejar errores específicos en el controlador
       throw error;
     }
@@ -161,7 +162,7 @@ export class UserService {
     };
 
     // Obtener clave secreta del entorno o usar una por defecto (en producción NUNCA usar una clave por defecto)
-    const secretKey = process.env.JWT_SECRET || 'tu_clave_secreta_muy_segura';
+    const secretKey = process.env.JWT_SECRET ?? 'tu_clave_secreta_muy_segura';
     
     // Generar token con expiración de 24 horas
     return jwt.sign(payload, secretKey, { expiresIn: '24h' });

@@ -30,18 +30,18 @@ export class AuthMiddleware {
   /**
    * Middleware para proteger rutas que requieren autenticación
    */
-  authenticate(req: Request, res: Response, next: NextFunction): void {
+  authenticate(req: Request, _res: Response, next: NextFunction): void {
     try {
       // Obtener token del encabezado Authorization
       const authHeader = req.headers.authorization;
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      if (!authHeader || authHeader.startsWith('Bearer ')) {
         throw new AppError('No se proporcionó token de autenticación', 401);
       }
 
       const token = authHeader.split(' ')[1];
       
       // Verificar token
-      const secretKey = process.env.JWT_SECRET || 'tu_clave_secreta_muy_segura';
+      const secretKey = process.env.JWT_SECRET ?? 'tu_clave_secreta_muy_segura';
       const decoded = jwt.verify(token, secretKey) as DecodedToken;
       
       // Agregar usuario autenticado a la solicitud
@@ -65,7 +65,7 @@ export class AuthMiddleware {
   /**
    * Middleware para verificar rol de superadmin
    */
-  isSuperAdmin(req: Request, res: Response, next: NextFunction): void {
+  isSuperAdmin(req: Request, _res: Response, next: NextFunction): void {
     try {
       if (!req.user) {
         throw new AppError('No autenticado', 401);
