@@ -57,7 +57,7 @@ src/
 
 1. Clonar el repositorio:
    ```bash
-   git clone https://github.com/yourusername/nexus.git
+   it clone https://github.com/Dantesiio/Nexus.git
    cd nexus
    ```
 
@@ -83,7 +83,7 @@ src/
 
 1. Clonar el repositorio:
    ```bash
-   git clone https://github.com/yourusername/nexus.git
+   git clone https://github.com/Dantesiio/Nexus.git
    cd nexus
    ```
 
