@@ -34,9 +34,10 @@ export class AuthMiddleware {
     try {
       // Obtener token del encabezado Authorization
       const authHeader = req.headers.authorization;
-      if (!authHeader || authHeader.startsWith('Bearer ')) {
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
         throw new AppError('No se proporcionó token de autenticación', 401);
       }
+      
 
       const token = authHeader.split(' ')[1];
       

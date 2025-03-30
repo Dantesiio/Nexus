@@ -9,8 +9,8 @@ services:
     env_file:
       - .env
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - "28017:27017" 
     networks:
@@ -18,13 +18,7 @@ services:
 
 volumes:
   mongodb-data:
-    driver: local
-    name: mongo-data
-  mongodb-log:
-    driver: local
-    name: mongo-log
 
 networks:
-  mongodb_network:
-    driver: bridge
-    name: mongo-network
+  my_network:
+    driver: bridge  # Red Docker para evitar conflictos con localhost

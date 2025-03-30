@@ -1,6 +1,7 @@
 // src/services/user.service.ts
 import User from '../models/user.model';
 import { IUserDocument, IUserInput, IUserUpdate, IUserLoginResponse } from '../interfaces/user.interface';
+import { securityService } from '../services/security.service'; // Import securityService
 import jwt from 'jsonwebtoken';
 import { AppError } from '../lib/appError';
 
@@ -125,7 +126,10 @@ export class UserService {
       }
 
       // Verificar contraseña
-      const isPasswordValid = await user.comparePassword(password);
+      const isPasswordValid = await securityService.comparePasswords(password, user.contraseña);
+      console.log("Contraseña ingresada:", password);
+      console.log("Contraseña en BD:", user.contraseña);
+      console.log("Resultado comparación:", isPasswordValid);
       if (!isPasswordValid) {
         throw new AppError('Credenciales inválidas', 401);
       }

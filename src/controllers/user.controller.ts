@@ -1,6 +1,5 @@
 // src/controllers/user.controller.ts
 import { Request, Response, NextFunction } from 'express';
-import '../types/express'; // Ensure the extended Request type is loaded
 import userService from '../services/user.service';
 import { IUserInput, IUserUpdate, IUserLogin, UserRole} from '../interfaces/user.interface';
 import { AppError } from '../lib/appError';
