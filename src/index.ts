@@ -2,7 +2,9 @@ import express from "express";
 import bodyParser from 'body-parser';
 import { connectionDB } from "./lib/connectionDB";
 import dotoenv from "dotenv";
-import userRoutes from "./routes/user.route"; // Import userRoutes from the appropriate file
+import userRoutes from "./routes/user.route"; // Rutas de usuarios
+import submissionRoutes from "./routes/submission.route"; // Rutas de entregas
+import courseRoutes from "./routes/course.route"; // Rutas de cursos
 
 async function start() {
 
@@ -25,6 +27,8 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.json()); // Asegura que Express pueda leer JSON
 app.use('/api', userRoutes); // Agrega las rutas al servidor
+app.use('/api', submissionRoutes); // Rutas de entregas
+app.use('/api', courseRoutes); // Rutas de cursos
 
 app.get('/', (_req: express.Request, res: express.Response) => {
   res.send("Hello World");
