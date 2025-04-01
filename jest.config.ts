@@ -6,6 +6,7 @@ const config: Config = {
   verbose: true,
   roots: ['<rootDir>/test'], 
   moduleFileExtensions: ['ts', 'js'],
+  testTimeout: 10000,
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },

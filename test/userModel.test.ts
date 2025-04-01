@@ -13,12 +13,12 @@ describe('User Model', () => {
     afterAll(async () => {
       await mongoose.disconnect();
     });
-    
+    const uniqueEmail = `test${Date.now()}@example.com`;
 
     it('should create a user successfully', async () => {
         const userData = {
             nombre: 'Juan Pérez',
-            correo: 'juan@example.com',
+            correo: uniqueEmail,
             contraseña: 'password123',
             rol: UserRole.REGULAR,
         };
