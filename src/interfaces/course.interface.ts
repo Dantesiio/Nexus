@@ -1,4 +1,4 @@
-// src/interfaces/course.interface.ts
+//src/controllers/user.controller.ts
 import { Document, Types } from 'mongoose';
 
 export enum CourseStatus {
