@@ -4,8 +4,10 @@ import { connectionDB } from "./lib/connectionDB";
 import dotoenv from "dotenv";
 import userRoutes from "./routes/user.route"; // Rutas de usuarios
 import submissionRoutes from "./routes/submission.route"; // Rutas de entregas
-import courseRoutes from "./routes/course.route"; // Rutas de cursos
+import courseRoutes from "./routes/course.route";
 
+// Rutas de cursos
+const app = express();
 async function start() {
 
   dotoenv.config({
@@ -21,7 +23,7 @@ async function start() {
       console.error("❌ Error al conectar a MongoDB:", error);
       process.exit(1);
     });
-const app = express();
+
 
 
 app.use(express.json());
@@ -42,4 +44,9 @@ app.listen(process.env.PORT, () => {
 
 })}
 
-start();
+if (require.main === module) {
+  start();
+}
+
+// Exportar la app para pruebas
+export default app;

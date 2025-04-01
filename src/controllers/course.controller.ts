@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import courseService from '../services/course.service';
 import { ICourseInput, ICourseUpdate } from '../interfaces/course.interface';
+<<<<<<< Updated upstream
+=======
+//import { AppError } from '../lib/appError';
+>>>>>>> Stashed changes
 
 export class CourseController {
   /**
