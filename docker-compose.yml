@@ -12,13 +12,14 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
     ports:
-      - "28017:27017" 
+      - "28017:27017"
     networks:
-      - mongodb_network
+      - my_network  # Changed from mongodb_network to my_network
 
 volumes:
   mongodb-data:
+  mongodb-log:  # Added this to match the volume used in the service
 
 networks:
   my_network:
-    driver: bridge  # Red Docker para evitar conflictos con localhost
+    driver: bridge

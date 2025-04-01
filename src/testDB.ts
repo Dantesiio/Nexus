@@ -15,7 +15,7 @@ const MONGO_URI = "mongodb://root:example@localhost:28017/usuariosDB?authSource=
     const userCount = await User.countDocuments({});
     console.log(`📌 Número total de usuarios en la base de datos: ${userCount}`);
 
-    const user = await User.findOne({ correo: "test@example.com" }).select("+contraseña");
+    const user = await User.findOne({ correo: "regular@ejemplo.com" }).select("+contraseña");
     console.log("🔍 Usuario encontrado:", user);
 
     if (user) {

@@ -1,7 +1,7 @@
 // src/services/user.service.ts
 import User from '../models/user.model';
 import { IUserDocument, IUserInput, IUserUpdate, IUserLoginResponse } from '../interfaces/user.interface';
-import { securityService } from '../services/security.service'; // Import securityService
+import { securityService } from './security.service'; // Import securityService
 import jwt from 'jsonwebtoken';
 import { AppError } from '../lib/appError';
 

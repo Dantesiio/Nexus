@@ -1,0 +1,796 @@
+{
+	"info": {
+		"_postman_id": "1cb989a9-98d8-4d45-9315-4b9d216a1680",
+		"name": "Nexus",
+		"description": "# **Pruebas de Integración**\n\nEste documento contiene pruebas de integración para las rutas definidas en el proyecto, cubriendo los módulos de **Courses**, **Submissions** y **Users**. Las pruebas están diseñadas para verificar el funcionamiento básico de cada endpoint, asumiendo que el servidor está corriendo en http://localhost:3000/api. Se utilizan variables de entorno en Postman como base_url, superadmin_token, regular_token, curso_id, entrega_id, user_id y test_user_id.\n\n## Configuración Inicial\n\n- **Entorno en Postman**:\n    \n    - base_url: http://localhost:3000/api\n        \n    - superadmin_token: Token JWT de un usuario con rol superadmin.\n        \n    - regular_token: Token JWT de un usuario con rol regular.\n        \n    - Variables dinámicas: curso_id, entrega_id, user_id, test_user_id (se llenan durante las pruebas).\n        \n- **Requisitos**:\n    \n    - Base de datos MongoDB activa.\n        \n    - Usuarios iniciales creados (superadmin y regular).\n        \n    - IDs válidos para docente, estudiante, y evaluacion.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42446355"
+	},
+	"item": [
+		{
+			"name": "Rutas de course.route.ts",
+			"item": [
+				{
+					"name": "POST /courses",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZWI1YzgyMjlhMTcxNzBhYWE0ODY0NyIsIm5vbWJyZSI6InJlZ3VsYXIiLCJjb3JyZW8iOiJyZWd1bGFyQGVqZW1wbG8uY29tIiwicm9sIjoicmVndWxhciIsImlhdCI6MTc0MzQ3NzkxMywiZXhwIjoxNzQzNTY0MzEzfQ.Z1u1yqfI49mFOG1Jb9AOJTd6dRVXgAxTi7RksPFRqJs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"nombre\": \"Curso Test\",\n  \"descripcion\": \"Curso para pruebas\",\n  \"codigo\": \"TEST102\",\n  \"docente\": \"67eb5a5629a17170aaa48635\", \n  \"fecha_inicio\": \"2025-04-01\",\n  \"fecha_fin\": \"2025-06-30\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/courses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"courses"
+							]
+						},
+						"description": "Crear un nuevo curso (requiere autenticación)."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /courses",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZWI1YzgyMjlhMTcxNzBhYWE0ODY0NyIsIm5vbWJyZSI6InJlZ3VsYXIiLCJjb3JyZW8iOiJyZWd1bGFyQGVqZW1wbG8uY29tIiwicm9sIjoicmVndWxhciIsImlhdCI6MTc0MzQ3NzkxMywiZXhwIjoxNzQzNTY0MzEzfQ.Z1u1yqfI49mFOG1Jb9AOJTd6dRVXgAxTi7RksPFRqJs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/courses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"courses"
+							]
+						},
+						"description": "Obtener todos los cursos (requiere autenticación)."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /courses/:id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZWI1YzgyMjlhMTcxNzBhYWE0ODY0NyIsIm5vbWJyZSI6InJlZ3VsYXIiLCJjb3JyZW8iOiJyZWd1bGFyQGVqZW1wbG8uY29tIiwicm9sIjoicmVndWxhciIsImlhdCI6MTc0MzQ3NzkxMywiZXhwIjoxNzQzNTY0MzEzfQ.Z1u1yqfI49mFOG1Jb9AOJTd6dRVXgAxTi7RksPFRqJs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/courses/67eb5d3a29a17170aaa4864c",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"courses",
+								"67eb5d3a29a17170aaa4864c"
+							]
+						},
+						"description": "Obtener un curso por ID (Requiere autenticación)."
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /courses/:id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superadmin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Curso Test Actualizado\",\n  \"descripcion\": \"Curso actualizado para pruebas\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/courses/67eb5d3a29a17170aaa4864c",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"courses",
+								"67eb5d3a29a17170aaa4864c"
+							]
+						},
+						"description": "Actualizar un curso por ID (requiere autenticación)"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /courses/:id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superadmin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/courses/67eb5d3a29a17170aaa4864c",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"courses",
+								"67eb5d3a29a17170aaa4864c"
+							]
+						},
+						"description": "Eliminar un curso por ID (requiere autenticación)."
+					},
+					"response": []
+				}
+			],
+			"description": "Se prueban todos los endpoints de cursos."
+		},
+		{
+			"name": "Rutas de submission.route.ts",
+			"item": [
+				{
+					"name": "POST /submissions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{regular_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"evaluacion\": \"605c72ef1e3b2c3d4f8e9a10\",\n  \"estudiante\": \"67eb5a5629a17170aaa48635\",\n  \"archivo\": \"http://example.com/entrega.pdf\",\n  \"comentarios\": \"Entrega de prueba\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/submissions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"submissions"
+							]
+						},
+						"description": "Crear una nueva entrega."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /submissions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{regular_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/submissions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"submissions"
+							]
+						},
+						"description": "Obtener todas las entregas\n"
+					},
+					"response": []
+				},
+				{
+					"name": "GET /submissions/:id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{regular_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/submissions/67eb61e729a17170aaa48663",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"submissions",
+								"67eb61e729a17170aaa48663"
+							]
+						},
+						"description": "Obtener una entrega por ID"
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /submissions/:id/grade",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superadmin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nota\": 4.0,\n  \"comentarios\": \"Buen esfuerzo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/submissions/67eb61e729a17170aaa48663/grade",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"submissions",
+								"67eb61e729a17170aaa48663",
+								"grade"
+							]
+						},
+						"description": "Calificar una entrega (requiere autentitación)."
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /submissions/:id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superadmin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/submissions/67eb61e729a17170aaa48663",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"submissions",
+								"67eb61e729a17170aaa48663"
+							]
+						},
+						"description": "Eliminar una entrega por ID (requiere autenticación)."
+					},
+					"response": []
+				}
+			],
+			"description": "Ahora se prueban todos los endpoints para submissions."
+		},
+		{
+			"name": "Rutas de user.route.ts",
+			"item": [
+				{
+					"name": "POST /auth/login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"correo\": \"nuevo@ejemplo.com\",\n  \"contraseña\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Iniciar sesión y obtener token."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /auth/profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superadmin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"profile"
+							]
+						},
+						"description": "Obtener perfil del usuario autenticado."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /usuarios",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superadmin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Usuario Test\",\n  \"correo\": \"test@example.com\",\n  \"contraseña\": \"123456\",\n  \"rol\": \"regular\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/usuarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios"
+							]
+						},
+						"description": "Crear un nuevo usuario."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /usuarios",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superadmin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/usuarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios"
+							]
+						},
+						"description": "Obtener todos los usuarios."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /usuarios/:id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superadmin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/usuarios/67eb5a5629a17170aaa48635",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"67eb5a5629a17170aaa48635"
+							]
+						},
+						"description": "Obtener un usuario por ID."
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /usuarios/:id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superadmin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Usuario Test Actualizado\",\n  \"correo\": \"test.updated@example.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/usuarios/67eb5a8829a17170aaa4863b",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"67eb5a8829a17170aaa4863b"
+							]
+						},
+						"description": "Actualizar un usuario por ID."
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /usuarios/:id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superadmin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/usuarios/67eb5a8829a17170aaa4863b",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"67eb5a8829a17170aaa4863b"
+							]
+						},
+						"description": "Eliminar un usuario por ID."
+					},
+					"response": []
+				}
+			],
+			"description": "Ahora todos los endpoints de users."
+		},
+		{
+			"name": "Crear un Usuario (Solo Superadmin)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZWIzMjQwYWU4ZDE1MzNkMGMyNjAwNSIsIm5vbWJyZSI6IlBpbm8iLCJjb3JyZW8iOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sIjoic3VwZXJhZG1pbiIsImlhdCI6MTc0MzQ3NzEzOCwiZXhwIjoxNzQzNTYzNTM4fQ.BJijpCNQO78JDZt3i7tGSOyzM7AmnyOsyIxWQaLbfxo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombre\": \"test\",\n  \"correo\": \"test@ejemplo.com\",\n  \"contraseña\": \"123456\",\n  \"rol\": \"superadmin\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/usuarios",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"usuarios"
+					]
+				},
+				"description": "Aquí fueron pruebas sencillas, representativas."
+			},
+			"response": []
+		},
+		{
+			"name": "Crear un Curso (Autenticado)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZWIzMjQwYWU4ZDE1MzNkMGMyNjAwNSIsIm5vbWJyZSI6IlBpbm8iLCJjb3JyZW8iOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sIjoic3VwZXJhZG1pbiIsImlhdCI6MTc0MzQ3NzEzOCwiZXhwIjoxNzQzNTYzNTM4fQ.BJijpCNQO78JDZt3i7tGSOyzM7AmnyOsyIxWQaLbfxo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombre\": \"Curso de Prueba\",\n  \"descripcion\": \"Curso para pruebas de integración\",\n  \"codigo\": \"TEST101\",\n  \"docente\": \"67eb5a8829a17170aaa4863b\",\n  \"estado\": \"ACTIVO\",\n  \"fecha_inicio\": \"2025-04-01\",\n  \"fecha_fin\": \"2025-06-30\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/courses",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear una Entrega (Relación entre Módulos)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZWI1YzgyMjlhMTcxNzBhYWE0ODY0NyIsIm5vbWJyZSI6InJlZ3VsYXIiLCJjb3JyZW8iOiJyZWd1bGFyQGVqZW1wbG8uY29tIiwicm9sIjoicmVndWxhciIsImlhdCI6MTc0MzQ3NzkxMywiZXhwIjoxNzQzNTY0MzEzfQ.Z1u1yqfI49mFOG1Jb9AOJTd6dRVXgAxTi7RksPFRqJs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"evaluacion\": \"605c72ef1e3b2c3d4f8e9a10\",\n  \"estudiante\": \"67eb5a8829a17170aaa4863b\",\n  \"archivo\": \"http://example.com/entrega.pdf\",\n  \"comentarios\": \"Entrega de prueba\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/submissions",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"submissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener Todos los Cursos (Autenticado)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZWI1YzgyMjlhMTcxNzBhYWE0ODY0NyIsIm5vbWJyZSI6InJlZ3VsYXIiLCJjb3JyZW8iOiJyZWd1bGFyQGVqZW1wbG8uY29tIiwicm9sIjoicmVndWxhciIsImlhdCI6MTc0MzQ3NzkxMywiZXhwIjoxNzQzNTY0MzEzfQ.Z1u1yqfI49mFOG1Jb9AOJTd6dRVXgAxTi7RksPFRqJs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/courses",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Calificar una Entrega (Autenticado)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZWIzMjQwYWU4ZDE1MzNkMGMyNjAwNSIsIm5vbWJyZSI6IlBpbm8iLCJjb3JyZW8iOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sIjoic3VwZXJhZG1pbiIsImlhdCI6MTc0MzQ3NzEzOCwiZXhwIjoxNzQzNTYzNTM4fQ.BJijpCNQO78JDZt3i7tGSOyzM7AmnyOsyIxWQaLbfxo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nota\": 4.5,\n  \"comentarios\": \"Buen trabajo\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/submissions/67eb5d1a29a17170aaa4864a/grade",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"submissions",
+						"67eb5d1a29a17170aaa4864a",
+						"grade"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Prueba de Autorización Fallida",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZWI1YzgyMjlhMTcxNzBhYWE0ODY0NyIsIm5vbWJyZSI6InJlZ3VsYXIiLCJjb3JyZW8iOiJyZWd1bGFyQGVqZW1wbG8uY29tIiwicm9sIjoicmVndWxhciIsImlhdCI6MTc0MzQ3NzkxMywiZXhwIjoxNzQzNTY0MzEzfQ.Z1u1yqfI49mFOG1Jb9AOJTd6dRVXgAxTi7RksPFRqJs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/usuarios",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"usuarios"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

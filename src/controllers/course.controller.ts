@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import courseService from '../services/course.service';
 import { ICourseInput, ICourseUpdate } from '../interfaces/course.interface';
-import { AppError } from '../lib/appError';
 
 export class CourseController {
   /**

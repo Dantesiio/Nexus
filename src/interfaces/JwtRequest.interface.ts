@@ -1,6 +1,6 @@
 //src/interfaces/JwtRequest.interface.ts
 import {Request} from 'express';
-import { UserRole } from '../interfaces/user.interface';
+import { UserRole } from './user.interface';
 
 export interface JwtRequest extends Request{
     user?:{
