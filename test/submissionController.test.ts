@@ -5,180 +5,171 @@ import submissionService from '../src/services/submission.service';
 import { AppError } from '../src/lib/appError';
 import mongoose from 'mongoose';
 
-// Mock del servicio de entregas
+// Mock del servicio de entregas para aislar las pruebas del controlador
 jest.mock('../src/services/submission.service');
 
+// Suite de pruebas para el controlador SubmissionController
 describe('SubmissionController', () => {
-  let submissionController: SubmissionController;
-  let req: Partial<Request>;
-  let res: Partial<Response>;
-  let next: NextFunction;
-  let mockSubmission: any;
+  let submissionController: SubmissionController; // Instancia del controlador
+  let req: Partial<Request>; // Mock parcial del objeto Request de Express
+  let res: Partial<Response>; // Mock parcial del objeto Response de Express
+  let next: NextFunction; // Mock de la función next para manejo de errores
+  let mockSubmission: any; // Objeto simulado de una entrega para usar en las pruebas
 
+  // Configuración inicial antes de cada prueba
   beforeEach(() => {
-    // Reiniciar todos los mocks
-    jest.clearAllMocks();
+    jest.clearAllMocks(); // Reinicia todos los mocks para evitar interferencias entre pruebas
 
-    // Crear instancia del controlador
-    submissionController = new SubmissionController();
+    submissionController = new SubmissionController(); // Crea una nueva instancia del controlador
 
-    // Crear mock de una entrega
+    // Define una entrega simulada con datos básicos
     mockSubmission = {
-      _id: new mongoose.Types.ObjectId().toString(),
+      _id: new mongoose.Types.ObjectId().toString(), // ID único como string
       evaluacion: new mongoose.Types.ObjectId().toString(),
       estudiante: new mongoose.Types.ObjectId().toString(),
-      archivo: 'http://ejemplo.com/archivo.pdf',
+      archivo: 'http://ejemplo.com/archivo.pdf', // URL del archivo
       comentarios: 'Comentarios de prueba',
       nota: null,
       fecha_entrega: new Date(),
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
-    // Mock de request
+    // Inicializa el mock de Request con objetos vacíos
     req = {
       body: {},
-      params: {}
+      params: {},
     };
 
-    // Mock de response
+    // Inicializa el mock de Response con funciones simuladas
     res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      status: jest.fn().mockReturnThis(), // Simula el método status y retorna el propio objeto
+      json: jest.fn(), // Simula el método json para capturar la respuesta
     };
 
-    // Mock de next
-    next = jest.fn();
+    // Inicializa el mock de NextFunction
+    next = jest.fn(); // Simula la función next para manejar errores
   });
 
+  // Pruebas para el método createSubmission
   describe('createSubmission', () => {
     beforeEach(() => {
+      // Configura el cuerpo de la solicitud con datos válidos para crear una entrega
       req.body = {
         evaluacion: new mongoose.Types.ObjectId().toString(),
         estudiante: new mongoose.Types.ObjectId().toString(),
         archivo: 'http://ejemplo.com/archivo.pdf',
-        comentarios: 'Comentarios iniciales'
+        comentarios: 'Comentarios iniciales',
       };
     });
 
     it('debería crear una entrega correctamente', async () => {
-      // Configurar mock del servicio
-      (submissionService.createSubmission as jest.Mock).mockResolvedValue({
+      // Mock del servicio para simular una creación exitosa
+      const createdSubmission = {
         _id: new mongoose.Types.ObjectId().toString(),
         ...req.body,
         nota: null,
         fecha_entrega: new Date(),
         createdAt: new Date(),
-        updatedAt: new Date()
-      });
+        updatedAt: new Date(),
+      };
+      (submissionService.createSubmission as jest.Mock).mockResolvedValue(createdSubmission);
 
-      // Ejecutar función del controlador
+      // Ejecuta el método del controlador
       await submissionController.createSubmission(req as Request, res as Response, next);
 
-      // Verificaciones
+      // Verifica que el servicio fue llamado con los datos correctos
       expect(submissionService.createSubmission).toHaveBeenCalledWith(req.body);
+      // Confirma que se estableció el código de estado 201 (creado)
       expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-        success: true,
-        data: expect.objectContaining({
-          evaluacion: req.body.evaluacion,
-          estudiante: req.body.estudiante,
-          archivo: req.body.archivo
+      // Verifica que la respuesta JSON contiene los datos esperados
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+          data: expect.objectContaining({
+            evaluacion: req.body.evaluacion,
+            estudiante: req.body.estudiante,
+            archivo: req.body.archivo,
+          }),
         })
-      }));
+      );
+      // Asegura que no se llamó a next (sin errores)
       expect(next).not.toHaveBeenCalled();
     });
 
     it('debería manejar errores al crear una entrega', async () => {
-      // Simular error en el servicio
+      // Simula un error específico del servicio
       const error = new AppError('Ya existe una entrega para esta evaluación', 400);
       (submissionService.createSubmission as jest.Mock).mockRejectedValue(error);
 
-      // Ejecutar función del controlador
       await submissionController.createSubmission(req as Request, res as Response, next);
 
-      // Verificaciones
       expect(submissionService.createSubmission).toHaveBeenCalledWith(req.body);
+      // Verifica que el error se pasó a next para ser manejado por el middleware de errores
       expect(next).toHaveBeenCalledWith(error);
-      expect(res.status).not.toHaveBeenCalled();
-      expect(res.json).not.toHaveBeenCalled();
+      expect(res.status).not.toHaveBeenCalled(); // No se establece estado en caso de error
+      expect(res.json).not.toHaveBeenCalled(); // No se envía respuesta JSON en caso de error
     });
   });
 
+  // Pruebas para el método getAllSubmissions
   describe('getAllSubmissions', () => {
     it('debería obtener todas las entregas correctamente', async () => {
-      // Configurar mock del servicio
+      // Mock del servicio con una lista de entregas
       const submissions = [
         mockSubmission,
-        {
-          ...mockSubmission,
-          _id: new mongoose.Types.ObjectId().toString(),
-          nota: 4.5
-        }
+        { ...mockSubmission, _id: new mongoose.Types.ObjectId().toString(), nota: 4.5 },
       ];
       (submissionService.getAllSubmissions as jest.Mock).mockResolvedValue(submissions);
 
-      // Ejecutar función del controlador
       await submissionController.getAllSubmissions(req as Request, res as Response, next);
 
-      // Verificaciones
-      expect(submissionService.getAllSubmissions).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(200);
+      expect(submissionService.getAllSubmissions).toHaveBeenCalled(); // Verifica la llamada al servicio
+      expect(res.status).toHaveBeenCalledWith(200); // Código de estado OK
       expect(res.json).toHaveBeenCalledWith({
         success: true,
-        count: 2,
-        data: submissions
+        count: 2, // Número de entregas retornadas
+        data: submissions,
       });
-      expect(next).not.toHaveBeenCalled();
+      expect(next).not.toHaveBeenCalled(); // Sin errores
     });
 
     it('debería manejar errores al obtener las entregas', async () => {
-      // Simular error en el servicio
       const error = new Error('Error al obtener las entregas');
       (submissionService.getAllSubmissions as jest.Mock).mockRejectedValue(error);
 
-      // Ejecutar función del controlador
       await submissionController.getAllSubmissions(req as Request, res as Response, next);
 
-      // Verificaciones
       expect(submissionService.getAllSubmissions).toHaveBeenCalled();
-      expect(next).toHaveBeenCalledWith(error);
+      expect(next).toHaveBeenCalledWith(error); // Error pasado a next
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
   });
 
+  // Pruebas para el método getSubmissionById
   describe('getSubmissionById', () => {
     beforeEach(() => {
-      req.params = { id: mockSubmission._id };
+      req.params = { id: mockSubmission._id }; // Configura el ID en los parámetros
     });
 
     it('debería obtener una entrega por ID correctamente', async () => {
-      // Configurar mock del servicio
       (submissionService.getSubmissionById as jest.Mock).mockResolvedValue(mockSubmission);
 
-      // Ejecutar función del controlador
       await submissionController.getSubmissionById(req as Request, res as Response, next);
 
-      // Verificaciones
       expect(submissionService.getSubmissionById).toHaveBeenCalledWith(mockSubmission._id);
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({
-        success: true,
-        data: mockSubmission
-      });
+      expect(res.json).toHaveBeenCalledWith({ success: true, data: mockSubmission });
       expect(next).not.toHaveBeenCalled();
     });
 
     it('debería manejar errores al obtener una entrega por ID', async () => {
-      // Simular error en el servicio
       const error = new AppError('Entrega no encontrada', 404);
       (submissionService.getSubmissionById as jest.Mock).mockRejectedValue(error);
 
-      // Ejecutar función del controlador
       await submissionController.getSubmissionById(req as Request, res as Response, next);
 
-      // Verificaciones
       expect(submissionService.getSubmissionById).toHaveBeenCalledWith(mockSubmission._id);
       expect(next).toHaveBeenCalledWith(error);
       expect(res.status).not.toHaveBeenCalled();
@@ -186,90 +177,64 @@ describe('SubmissionController', () => {
     });
   });
 
+  // Pruebas para el método gradeSubmission
   describe('gradeSubmission', () => {
     beforeEach(() => {
-      req.params = { id: mockSubmission._id };
-      req.body = {
-        nota: 4.5,
-        comentarios: 'Excelente trabajo'
-      };
+      req.params = { id: mockSubmission._id }; // ID de la entrega a calificar
+      req.body = { nota: 4.5, comentarios: 'Excelente trabajo' }; // Datos de calificación
     });
 
     it('debería calificar una entrega correctamente', async () => {
-      // Configurar mock del servicio con la entrega calificada
-      const gradedSubmission = {
-        ...mockSubmission,
-        nota: 4.5,
-        comentarios: 'Excelente trabajo'
-      };
+      const gradedSubmission = { ...mockSubmission, nota: 4.5, comentarios: 'Excelente trabajo' };
       (submissionService.gradeSubmission as jest.Mock).mockResolvedValue(gradedSubmission);
 
-      // Ejecutar función del controlador
       await submissionController.gradeSubmission(req as Request, res as Response, next);
 
-      // Verificaciones
-      expect(submissionService.gradeSubmission).toHaveBeenCalledWith(
-        mockSubmission._id,
-        req.body
-      );
+      expect(submissionService.gradeSubmission).toHaveBeenCalledWith(mockSubmission._id, req.body);
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({
-        success: true,
-        data: gradedSubmission
-      });
+      expect(res.json).toHaveBeenCalledWith({ success: true, data: gradedSubmission });
       expect(next).not.toHaveBeenCalled();
     });
 
     it('debería manejar errores al calificar una entrega', async () => {
-      // Simular error en el servicio
       const error = new AppError('Entrega no encontrada', 404);
       (submissionService.gradeSubmission as jest.Mock).mockRejectedValue(error);
 
-      // Ejecutar función del controlador
       await submissionController.gradeSubmission(req as Request, res as Response, next);
 
-      // Verificaciones
-      expect(submissionService.gradeSubmission).toHaveBeenCalledWith(
-        mockSubmission._id,
-        req.body
-      );
+      expect(submissionService.gradeSubmission).toHaveBeenCalledWith(mockSubmission._id, req.body);
       expect(next).toHaveBeenCalledWith(error);
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
   });
 
+  // Pruebas para el método deleteSubmission
   describe('deleteSubmission', () => {
     beforeEach(() => {
-      req.params = { id: mockSubmission._id };
+      req.params = { id: mockSubmission._id }; // ID de la entrega a eliminar
     });
 
     it('debería eliminar una entrega correctamente', async () => {
-      // Configurar mock del servicio
       (submissionService.deleteSubmission as jest.Mock).mockResolvedValue(undefined);
 
-      // Ejecutar función del controlador
       await submissionController.deleteSubmission(req as Request, res as Response, next);
 
-      // Verificaciones
       expect(submissionService.deleteSubmission).toHaveBeenCalledWith(mockSubmission._id);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         success: true,
-        message: 'Entrega eliminada correctamente'
+        message: 'Entrega eliminada correctamente',
       });
       expect(next).not.toHaveBeenCalled();
     });
 
     it('debería manejar errores al eliminar una entrega', async () => {
-      // Simular error en el servicio
       const error = new Error('Error al eliminar la entrega');
       (submissionService.deleteSubmission as jest.Mock).mockRejectedValue(error);
 
-      // Ejecutar función del controlador
       await submissionController.deleteSubmission(req as Request, res as Response, next);
 
-      // Verificaciones
       expect(submissionService.deleteSubmission).toHaveBeenCalledWith(mockSubmission._id);
       expect(next).toHaveBeenCalledWith(error);
       expect(res.status).not.toHaveBeenCalled();
